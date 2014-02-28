@@ -3520,8 +3520,13 @@ error:
 
 static int selinux_mmap_addr(unsigned long addr)
 {
-	int rc = 0;
-	u32 sid = current_sid();
+	int rc;
+
+	/* do DAC check on address space usage */
+	rc = cap_mmap_addr(addr);
+	if (rc)
+		return rc;
+
 #ifdef CONFIG_RKP_KDP
 	if ((rc = security_integrity_current()))
 		return rc;
@@ -3533,14 +3538,12 @@ static int selinux_mmap_addr(unsigned long addr)
 	 * if DAC would have also denied the operation.
 	 */
 	if (addr < CONFIG_LSM_MMAP_MIN_ADDR) {
+		u32 sid = current_sid();
 		rc = avc_has_perm(sid, sid, SECCLASS_MEMPROTECT,
 				  MEMPROTECT__MMAP_ZERO, NULL);
-		if (rc)
-			return rc;
 	}
 
-	/* do DAC check on address space usage */
-	return cap_mmap_addr(addr);
+	return rc;
 }
 
 static int selinux_mmap_file(struct file *file, unsigned long reqprot,
