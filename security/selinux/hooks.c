@@ -232,6 +232,18 @@ static int selinux_secmark_enabled(void)
 #ifdef CONFIG_RKP_KDP
 RKP_RO_AREA struct task_security_struct init_sec;
 #endif
+
+static int selinux_netcache_avc_callback(u32 event)
+{
+	if (event == AVC_CALLBACK_RESET) {
+		sel_netif_flush();
+		sel_netnode_flush();
+		sel_netport_flush();
+		synchronize_net();
+	}
+	return 0;
+}
+
 /*
  * initialise the security for the init task
  */
@@ -6777,6 +6789,10 @@ static __init int selinux_init(void)
 #ifdef CONFIG_ALWAYS_ENFORCE
 	selinux_enforcing = 1;
 #endif
+
+	if (avc_add_callback(selinux_netcache_avc_callback, AVC_CALLBACK_RESET))
+		panic("SELinux: Unable to register AVC netcache callback\n");
+
 	if (selinux_enforcing)
 		printk(KERN_DEBUG "SELinux:  Starting in enforcing mode\n");
 	else
