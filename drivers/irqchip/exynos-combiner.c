@@ -21,7 +21,6 @@
 #include <linux/syscore_ops.h>
 
 #ifdef CONFIG_EXYNOS_ATAGS
-#include <mach/irqs.h>
 #include <plat/cpu.h>
 #endif
 
