@@ -454,8 +454,16 @@ static void gpio_keys_gpio_report_event(struct gpio_button_data *bdata)
 		printk(KERN_INFO "PWR key is pressed\n");
 	}
 
-	if ((button->code == KEY_HOMEPAGE) && !!state) {
-		printk(KERN_INFO "HOME key is pressed\n");
+	if (button->code == KEY_HOMEPAGE) {
+		printk(KERN_INFO "HOME key is %s\n", !!state ? "pressed" : "released");
+        printk(KERN_INFO "GPIO-KEY: Sending KEY_WAKEUP (%s)", !!state ? "pressed" : "released");
+		if (!!state) {
+			input_report_key(input, KEY_WAKEUP, 1);
+			input_sync(input);
+        } else {
+			input_report_key(input, KEY_WAKEUP, 0);
+			input_sync(input);
+		}
 	}
 
 	if (type == EV_ABS) {
@@ -965,6 +973,8 @@ static int gpio_keys_probe(struct platform_device *pdev)
 	}
 
 	device_init_wakeup(&pdev->dev, wakeup);
+
+	set_bit(KEY_WAKEUP, input->keybit);
 
 	return 0;
 
