@@ -24,6 +24,7 @@
 #include <linux/binfmts.h>
 #include <linux/in.h>
 #include <linux/spinlock.h>
+#include <net/net_namespace.h>
 #include "flask.h"
 #include "avc.h"
 
@@ -34,6 +35,9 @@ struct task_security_struct {
 	u32 create_sid;		/* fscreate SID */
 	u32 keycreate_sid;	/* keycreate SID */
 	u32 sockcreate_sid;	/* fscreate SID */
+#ifdef CONFIG_RKP_KDP
+	void *bp_cred;
+#endif
 };
 
 struct inode_security_struct {
@@ -78,6 +82,7 @@ struct ipc_security_struct {
 };
 
 struct netif_security_struct {
+	struct net *ns;			/* network namespace */
 	int ifindex;			/* device index */
 	u32 sid;			/* SID for this interface */
 };

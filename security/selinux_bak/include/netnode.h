@@ -1,16 +1,17 @@
 /*
- * Network port table
+ * Network node table
  *
- * SELinux must keep a mapping of network ports to labels/SIDs.  This
+ * SELinux must keep a mapping of network nodes to labels/SIDs.  This
  * mapping is maintained as part of the normal policy but a fast cache is
- * needed to reduce the lookup overhead.
+ * needed to reduce the lookup overhead since most of these queries happen on
+ * a per-packet basis.
  *
  * Author: Paul Moore <paul@paul-moore.com>
  *
  */
 
 /*
- * (c) Copyright Hewlett-Packard Development Company, L.P., 2008
+ * (c) Copyright Hewlett-Packard Development Company, L.P., 2007
  *
  * This program is free software: you can redistribute it and/or modify
  * it under the terms of version 2 of the GNU General Public License as
@@ -23,11 +24,9 @@
  *
  */
 
-#ifndef _SELINUX_NETPORT_H
-#define _SELINUX_NETPORT_H
+#ifndef _SELINUX_NETNODE_H
+#define _SELINUX_NETNODE_H
 
-void sel_netport_flush(void);
-
-int sel_netport_sid(u8 protocol, u16 pnum, u32 *sid);
+int sel_netnode_sid(void *addr, u16 family, u32 *sid);
 
 #endif
