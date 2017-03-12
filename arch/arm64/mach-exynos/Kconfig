@@ -38,6 +38,14 @@ config SOC_EXYNOS7420
 	help
 	  Enable EXYNOS7420 SoC support
 
+config MODEL_DTS_TMO
+	bool "SAMSUNG Galaxy Note5 TMobile"
+	depends on SOC_EXYNOS7420
+
+config MODEL_DTS_INT
+	bool "SAMSUNG Galxy Note5 International"
+	depends on SOC_EXYNOS7420
+
 config SOC_EXYNOS7420_EVT_0
 	bool "SAMSUNG EXYNOS7420 EVT0"
 	depends on SOC_EXYNOS7420
